@@ -4,7 +4,7 @@ from django.forms import ValidationError
 
 REGEX_EMAIL = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
 REGEX_PASSWORD = '^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$'
-REGEX_IMAGE_URL = '/(http(s?):)([/|.|\w|\s|-])*\.(jpg|jpeg|gif|png|bmp|tiff|tga|svg)/g'
+REGEX_IMAGE_URL = '/.*\.(jpg|jpeg|gif|png|bmp|tiff|tga|svg)$/igm'
 
 def email_validate(email):
     if not re.match(REGEX_EMAIL, email):
