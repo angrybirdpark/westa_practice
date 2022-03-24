@@ -15,17 +15,15 @@ class PostView(View):
             data = json.loads(request.body)
             user = request.user
             text = data['text']
-            image = data['image']
-            image_list = image.split(',')
+            image_list = data['image'].split(',')
             
             post = Post.objects.create(
                 user = user,
                 text = text
             )
             
-            image_url_validate(image)
-            
             for image in image_list:
+                image_url_validate(image)
                 Image.objects.create(
                     image_url = image,
                     post = post
