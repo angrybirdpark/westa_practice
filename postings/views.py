@@ -17,13 +17,15 @@ class PostView(View):
             text = data['text']
             image_list = data['image'].split(',')
             
+            for image in image_list:
+                image_url_validate(image)
+            
             post = Post.objects.create(
                 user = user,
                 text = text
             )
             
             for image in image_list:
-                image_url_validate(image)
                 Image.objects.create(
                     image_url = image,
                     post = post

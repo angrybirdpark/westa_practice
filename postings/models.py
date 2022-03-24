@@ -15,4 +15,4 @@ class Image(models.Model):
     post = models.ForeignKey('Post', on_delete=models.CASCADE)
     
     class Meta:
-        db_table = 'iamges'
+        db_table = 'images'
