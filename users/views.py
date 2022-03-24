@@ -1,6 +1,6 @@
 import json, bcrypt, jwt
-from django.forms import ValidationError
 
+from django.forms import ValidationError
 from django.http  import JsonResponse
 from django.views import View
 from django.conf  import settings
