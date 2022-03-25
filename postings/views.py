@@ -49,13 +49,15 @@ class PostView(View):
         for post in posts:
             results.append(
                 {
+                    'post_id'   : post.id,
+                    'user_id'   : User.objects.get(id = post.user.id).id,
                     'name'      : User.objects.get(id = post.user.id).name,
                     'content'   : post.content,
                     'images'    : [image.image_url for image in post.image_set.all()],
                     'created_at': post.created_at
                 }
             )
-        return JsonResponse({'Data' : results}, status=201)
+        return JsonResponse({'Post' : results}, status=201)
 
 class CommentView(View):
     @login_decorator
@@ -78,3 +80,19 @@ class CommentView(View):
             return JsonResponse({'Message' : 'Key_Error'}, status=400)
         except Post.DoesNotExist:
             return JsonResponse({'Message' : "Posting Does Not Exist"}, status=400)
+        
+    @login_decorator
+    def get(self, request):
+        comments = Comment.objects.all()
+        results = []
+        
+        for comment in comments:
+            results.append(
+                {
+                    'content_id': comment.id,
+                    'content'   : comment.comment,
+                    'name'      : User.objects.get(id = comment.user.id).name,
+                    'post'      : Post.objects.get(id = comment.post.id).content
+                }
+            )
+        return JsonResponse({'Comment' : results}, status=201)
