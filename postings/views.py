@@ -16,7 +16,7 @@ class PostView(View):
             data             = json.loads(request.body)
             input_user       = request.user
             input_content    = data['content']
-            input_image_list = data['image'].split(',')
+            input_image_list = data['image_url'].split(',')
             
             for image in input_image_list:
                 image_url_validate(image)
@@ -35,6 +35,7 @@ class PostView(View):
                     post      = post
                 )
             return JsonResponse({'Message' : 'Success'}, status=201)
+        
         except KeyError:
             return JsonResponse({'Message' : 'Key_Error'}, status=400)
         except ValidationError as e:
@@ -56,21 +57,24 @@ class PostView(View):
             )
         return JsonResponse({'Data' : results}, status=201)
 
-# class CommentView(View):
-#     @login_decorator
-#     def post(self, request):
-#         try:
-#             data = json.loads(request.body)
-#             user = request.user
-#             comment = data['comment']
+class CommentView(View):
+    @login_decorator
+    def post(self, request):
+        try:
+            data = json.loads(request.body)
+            user = request.user
+            post = Post.objects.get(id = data['post_id'])
+            comment = data['comment']
             
-#             post = Post.objects.all()
+            Comment.objects.create(
+                user = user,
+                post = post,
+                comment = comment
+            )
             
-#             )
-            
-#             Comment.objects.create(
-#                 user = user,
-#                 post = Comment.objects.get(user = user).post,
-#                 comment = comment
-#             )
-            
+            return JsonResponse({'Message' : 'Post created!'}, status=200)
+
+        except KeyError:
+            return JsonResponse({'Message' : 'Key_Error'}, status=400)
+        except Post.DoesNotExist:
+            return JsonResponse({'Message' : "Posting Does Not Exist"}, status=400)
