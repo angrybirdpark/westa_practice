@@ -64,14 +64,14 @@ class CommentView(View):
     def post(self, request):
         try:
             data = json.loads(request.body)
-            user = request.user
-            post = Post.objects.get(id = data['post_id'])
-            comment = data['comment']
+            input_user = request.user
+            input_post = Post.objects.get(id = data['post_id'])
+            input_comment = data['comment']
             
             Comment.objects.create(
-                user = user,
-                post = post,
-                comment = comment
+                user = input_user,
+                post = input_post,
+                comment = input_comment
             )
             
             return JsonResponse({'Message' : 'Post created!'}, status=200)
