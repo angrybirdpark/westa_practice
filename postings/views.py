@@ -1,3 +1,4 @@
+from email import contentmanager
 import json
 
 from django.http  import JsonResponse
@@ -47,17 +48,30 @@ class PostView(View):
         results = []
         
         for post in posts:
+            comments = post.comment_set.all()
+            results_comments = []
+            
+            for comment in comments:
+                results_comments.append(
+                    {
+                        'id'      : comment.id,
+                        'userName': comment.user.id,
+                        'content' : comment.comment,
+                        'isliked' : True
+                    }
+                )
+
             results.append(
                 {
-                    'post_id'   : post.id,
-                    'user_id'   : User.objects.get(id = post.user.id).id,
-                    'name'      : User.objects.get(id = post.user.id).name,
-                    'content'   : post.content,
-                    'images'    : [image.image_url for image in post.image_set.all()],
-                    'created_at': post.created_at
+                    'postId'     : post.id,
+                    'profileName': User.objects.get(id = post.user.id).name,
+                    'profileUrl' : "https://hhspress.org/wp-content/uploads/2020/05/2-24435_red-angry-birds-red-angry-birds-png-transparent.png",
+                    'contentUrl' : [image.image_url for image in post.image_set.all()],
+                    'feedContent': post.content,
+                    'commentList': results_comments
                 }
             )
-        return JsonResponse({'Post' : results}, status=201)
+        return JsonResponse({results}, status=201)
 
 class CommentView(View):
     @login_decorator
@@ -89,10 +103,11 @@ class CommentView(View):
         for comment in comments:
             results.append(
                 {
-                    'content_id': comment.id,
-                    'content'   : comment.comment,
-                    'name'      : User.objects.get(id = comment.user.id).name,
-                    'post'      : Post.objects.get(id = comment.post.id).content
+                    'content_id'   : comment.id,
+                    'content'      : comment.comment,
+                    'name'         : User.objects.get(id = comment.user.id).name,
+                    'post_id'      : Post.objects.get(id = comment.post.id).id,
+                    'post'         : Post.objects.get(id = comment.post.id).content
                 }
             )
         return JsonResponse({'Comment' : results}, status=201)
