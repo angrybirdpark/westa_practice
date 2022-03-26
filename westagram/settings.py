@@ -152,7 +152,7 @@ CORS_ALLOW_HEADERS = (
     'origin',
     'user-agent',
     'x-csrftoken',
-    'x-requested-with',    		
+    'x-requested-with',
 )
 
 ALGORITHM = ALGORITHM

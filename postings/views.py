@@ -71,7 +71,7 @@ class PostView(View):
                     'commentList': results_comments
                 }
             )
-        return JsonResponse({results}, status=201)
+        return JsonResponse({'Posting' : results}, status=201)
 
 class CommentView(View):
     @login_decorator
