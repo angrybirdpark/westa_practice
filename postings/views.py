@@ -1,11 +1,10 @@
-from email import contentmanager
 import json
 
 from django.http  import JsonResponse
 from django.views import View
 from django.forms import ValidationError
 
-from postings.models import Post, Image, Comment
+from postings.models import Post, Image, Comment, Like
 from users.util      import login_decorator
 from users.validator import image_url_validate
 from users.models    import User
@@ -111,3 +110,30 @@ class CommentView(View):
                 }
             )
         return JsonResponse({'Comment' : results}, status=201)
+
+class LikeView(View):
+    @login_decorator
+    def post(self, request):
+        try:
+            data = json.loads(request.body)
+            input_user = request.user
+            input_post = Post.objects.get(id = data['post_id'])
+            
+            like_filter = Like.objects.filter(user = input_user, post = input_post)
+            
+            if like_filter.exists():
+                like_filter.delete()
+                return JsonResponse({'Message' : 'Unliked!'}, status=200)
+            
+            Like.objects.create(
+                user = input_user,
+                post = input_post,
+            )
+            
+            return JsonResponse({'Message' : 'Liked!'}, status=200)
+
+        except KeyError:
+            return JsonResponse({'Message' : 'Key_Error'}, status=400)
+        except Post.DoesNotExist:
+            return JsonResponse({'Message' : "Posting Does Not Exist"}, status=400)
+        
